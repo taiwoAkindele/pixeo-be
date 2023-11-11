@@ -1,4 +1,4 @@
-import { body, param } from "express-validator";
+import { body, query } from "express-validator";
 import User from "../models/User";
 
 export const signupValidator = () => {
@@ -28,7 +28,23 @@ export const signupValidator = () => {
   ];
 };
 export const emailTokenValidator = () => {
-  return [body("otp", "Email verification token is required").isNumeric()];
+  return [
+    body("email", "Email is required")
+      .isEmail()
+      .custom(async (email, { req }) => {
+        try {
+          const user = await User.findOne({ email: email });
+          if (user) {
+            return true;
+          } else {
+            throw new Error("User not found!");
+          }
+        } catch (error) {
+          throw new Error(error.message);
+        }
+      }),
+    body("otp", "Email verification token is required").isNumeric(),
+  ];
 };
 
 export const loginValidator = () => {
@@ -74,13 +90,13 @@ export const passwordResetValidator = () => {
 
 export const verifyResetPasswordValidator = () => {
   return [
-    param("email", "Email is required").isEmail(),
-    param("token", "Reset Password Token is required")
+    query("email", "Email is required").isEmail(),
+    query("token", "Reset Password Token is required")
       .isString()
       .custom(async (token, { req }) => {
         try {
           const user = await User.findOne({
-            email: req.body.email,
+            email: req.query.email,
             resetPasswordToken: token,
             resetPasswordTokenTime: { $gt: Date.now() },
           });
@@ -91,6 +107,25 @@ export const verifyResetPasswordValidator = () => {
           }
         } catch (error) {
           throw new Error(error);
+        }
+      }),
+  ];
+};
+
+export const verifyResendEmailToken = () => {
+  return [
+    query("email", "Email is required")
+      .isEmail()
+      .custom(async (email, { req }) => {
+        try {
+          const user = await User.findOne({ email: email });
+          if (user) {
+            return true;
+          } else {
+            throw new Error("User not found!");
+          }
+        } catch (error) {
+          throw new Error(error.message);
         }
       }),
   ];

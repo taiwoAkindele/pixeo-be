@@ -33,20 +33,14 @@ const UserController = {
         fullName: fullName,
       };
       let user = await new User(data).save();
-      const payload = {
-        aud: user._id,
-        email: user.email,
-      };
-      const token = jwtSign(payload);
+
       const dataOne = await User.findById(
         { _id: user._id },
         { emailToken: user.emailToken, emailTokenExp: user.emailTokenExp }
       );
       res.status(201).json({
         status: true,
-        message: "Account Successfully Created",
-        accessToken: token,
-        data: dataOne,
+        message: "Account created successfully",
       });
       await sendMail({
         to: [user.email],
@@ -61,7 +55,7 @@ const UserController = {
   },
 
   verifyEmailToken: async (req, res, next) => {
-    const email = req.user.email;
+    const email = req.body.email;
     const emailToken = req.body.otp;
     try {
       const data = await User.findOneAndUpdate(
@@ -108,7 +102,7 @@ const UserController = {
   },
 
   resendEmailToken: async (req, res, next) => {
-    const email = req.user.email;
+    const email = req.query.email;
     const verificationToken = generateVerificationToken();
     try {
       const user = await User.findOneAndUpdate(
@@ -123,7 +117,7 @@ const UserController = {
       await sendMail({
         to: [user.email],
         subject: "Resend Email Verification",
-        htmlPath: "../html/ResendEmailToken.html",
+        htmlPath: "../html/SignupEmail.html",
         userName: user.fullName,
         token: user.emailToken,
       });

@@ -7,8 +7,9 @@ import {
   resetPasswordValidator,
   signupValidator,
   verifyResetPasswordValidator,
+  verifyResendEmailToken,
 } from "../validators/UserValidator";
-import { auth, checkError } from "../middleware/GlobalMiddleware";
+import { checkError } from "../middleware/GlobalMiddleware";
 import UserController from "../controller/UserController";
 
 const UserRouter = () => {
@@ -32,22 +33,26 @@ const UserRouter = () => {
       checkError,
       UserController.resetPasswordOtp
     );
+  };
+
+  const getRoutes = () => {
     router.get(
       "/verify/reset-password-token",
       verifyResetPasswordValidator(),
       checkError,
       UserController.verifyResetPassword
     );
-  };
-
-  const getRoutes = () => {
-    router.get("/resend/email-token", auth, UserController.resendEmailToken);
+    router.get(
+      "/resend/email-token",
+      verifyResendEmailToken,
+      checkError,
+      UserController.resendEmailToken
+    );
   };
 
   const patchRoutes = () => {
     router.patch(
       "/verify-email",
-      auth,
       emailTokenValidator(),
       checkError,
       UserController.verifyEmailToken
