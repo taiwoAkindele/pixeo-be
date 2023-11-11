@@ -18,6 +18,7 @@ const sendMail = async (data: {
   htmlPath: string;
   userName: string;
   token: string;
+  email?: string;
 }): Promise<any> => {
   const transporter = initiateTransport();
 
@@ -26,7 +27,8 @@ const sendMail = async (data: {
 
   const personalizedHtml = emailHtml
     .replace("[user]", data.userName)
-    .replace("[token]", data.token);
+    .replace("[token]", data.token)
+    .replace("[email]", data.email);
 
   const mailOptions = {
     from: " 'PIXEO'<no-reply@gmail.com>",

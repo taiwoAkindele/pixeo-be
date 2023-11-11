@@ -48,6 +48,7 @@ const UserController = {
         htmlPath: "../html/SignupEmail.html",
         userName: fullName,
         token: user.emailToken,
+        email: user.email,
       });
     } catch (e) {
       next(e);
@@ -120,6 +121,7 @@ const UserController = {
         htmlPath: "../html/SignupEmail.html",
         userName: user.fullName,
         token: user.emailToken,
+        email: user.email,
       });
     } catch (error) {
       next(error);
