@@ -65,7 +65,7 @@ export const loginValidator = () => {
           throw new Error(error.message);
         }
       }),
-    body("password", "Password is required").isNumeric(),
+    body("password", "Password is required").isString(),
   ];
 };
 

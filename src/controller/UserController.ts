@@ -96,7 +96,7 @@ const UserController = {
         email: user.email,
       };
       const token = jwtSign(payload);
-      res.json({ message: "User Logged In", token: token, user: user });
+      res.json({ message: "User Logged In", token: token, data: user });
     } catch (error) {
       next(error);
     }
