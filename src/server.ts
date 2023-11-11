@@ -12,6 +12,8 @@ const dotEnv = () => {
   dotenv.config({ path: ".env" });
 };
 
+const app: express.Application = express();
+
 const connectToMongoDb = async (dbUri) => {
   try {
     await mongoose.connect(dbUri);
@@ -50,7 +52,6 @@ const errorHandler = (error, req, res, next) => {
 };
 
 export const createServer = async () => {
-  const app: express.Application = express();
   dotEnv();
   await connectToMongoDb(process.env.DEV_DB_URI);
   configureApp(app);
