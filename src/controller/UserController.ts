@@ -42,7 +42,7 @@ const UserController = {
         { _id: user._id },
         { emailToken: user.emailToken, emailTokenExp: user.emailTokenExp }
       );
-      res.json({
+      res.status(201).json({
         status: true,
         message: "Account Successfully Created",
         accessToken: token,
