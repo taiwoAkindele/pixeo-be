@@ -44,7 +44,7 @@ const UserRouter = () => {
     );
     router.get(
       "/resend/email-token",
-      verifyResendEmailToken,
+      verifyResendEmailToken(),
       checkError,
       UserController.resendEmailToken
     );
