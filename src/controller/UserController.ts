@@ -34,14 +34,11 @@ const UserController = {
       };
       let user = await new User(data).save();
 
-      const dataOne = await User.findById(
-        { _id: user._id },
-        { emailToken: user.emailToken, emailTokenExp: user.emailTokenExp }
-      );
       res.status(201).json({
         status: true,
         message: "Account created successfully",
       });
+
       await sendMail({
         to: [user.email],
         subject: "Verification Email",
@@ -112,7 +109,8 @@ const UserController = {
           emailToken: verificationToken,
           emailTokenExp: Date.now() + MAX_TOKEN_TIME,
           updatedAt: new Date(),
-        }
+        },
+        { new: true }
       );
       res.json({ message: "Email Token sent successfully", success: true });
       await sendMail({
