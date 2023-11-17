@@ -146,15 +146,8 @@ const UserController = {
         htmlPath: "../html/ResendEmailToken.html",
         userName: user.fullName,
         token: user.resetPasswordToken,
+        email: user.email,
       });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  verifyResetPassword: (req, res, next) => {
-    try {
-      res.json({ success: true });
     } catch (error) {
       next(error);
     }
@@ -186,6 +179,10 @@ const UserController = {
       next(error);
     }
   },
+
+  // resetPassword: async (req, res, next) => {
+
+  // },
 };
 
 export default UserController;

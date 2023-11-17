@@ -6,7 +6,6 @@ import {
   passwordResetValidator,
   resetPasswordValidator,
   signupValidator,
-  verifyResetPasswordValidator,
   verifyResendEmailToken,
 } from "../validators/UserValidator";
 import { checkError } from "../middleware/GlobalMiddleware";
@@ -36,12 +35,6 @@ const UserRouter = () => {
   };
 
   const getRoutes = () => {
-    router.get(
-      "/verify/reset-password-token",
-      verifyResetPasswordValidator(),
-      checkError,
-      UserController.verifyResetPassword
-    );
     router.get(
       "/resend/email-token",
       verifyResendEmailToken(),

@@ -88,27 +88,59 @@ export const passwordResetValidator = () => {
   ];
 };
 
-export const verifyResetPasswordValidator = () => {
+export const resetPasswordValidator = () => {
   return [
-    query("email", "Email is required").isEmail(),
-    query("token", "Reset Password Token is required")
-      .isString()
-      .custom(async (token, { req }) => {
+    body("email", "Email is required")
+      .isEmail()
+      .custom(async (email, { req }) => {
         try {
           const user = await User.findOne({
-            email: req.query.email,
-            resetPasswordToken: token,
-            resetPasswordTokenTime: { $gt: Date.now() },
+            email: email,
           });
           if (user) {
+            req.user = user;
             return true;
           } else {
-            throw "Reset Password Token has expired!";
+            throw "Email Does not Exist";
           }
         } catch (error) {
           throw new Error(error);
         }
       }),
+    body("password", "New Password is Required")
+      .isLength({ min: 8, max: 20 })
+      .withMessage("Password must be between 8-20 characters"),
+    body("confirmPassword", "Confirm Password is required")
+      .notEmpty()
+      .withMessage("Confirm Password must be between 8-20 characters"),
+    body("token", "Password verification token is required")
+      .isNumeric()
+      .custom((token, { req }) => {
+        if (req.user.resetPasswordToken === token) {
+          return true;
+        } else {
+          req.errorStatus = 422;
+          throw "Invalid Password Token. Please try again";
+        }
+      }),
+    // body("token", "Reset Password Token is required")
+    //   .isString()
+    //   .custom(async (token, { req }) => {
+    //     try {
+    //       const user = await User.findOne({
+    //         email: req.query.email,
+    //         resetPasswordToken: token,
+    //         resetPasswordTokenTime: { $gt: Date.now() },
+    //       });
+    //       if (user) {
+    //         return true;
+    //       } else {
+    //         throw "Reset Password Token has expired!";
+    //       }
+    //     } catch (error) {
+    //       throw new Error(error);
+    //     }
+    //   }),
   ];
 };
 
@@ -131,41 +163,41 @@ export const verifyResendEmailToken = () => {
   ];
 };
 
-export const resetPasswordValidator = () => {
-  return [
-    body("email", "Email is required")
-      .isEmail()
-      .custom(async (email, { req }) => {
-        try {
-          const user = await User.findOne({
-            email: email,
-          });
-          if (user) {
-            req.user = user;
-            return true;
-          } else {
-            throw "Email Does not Exist";
-          }
-        } catch (error) {
-          throw new Error(error);
-        }
-      }),
-    body("password", "New Password is Required")
-      .isAlphanumeric()
-      .isLength({ min: 8, max: 20 })
-      .withMessage("Password must be between 8-20 characters"),
-    body("confirmPassword", "Confirm Password is required")
-      .notEmpty()
-      .withMessage("Confirm Password must be between 8-20 characters"),
-    body("otp", "Password verification token is required")
-      .isNumeric()
-      .custom((otp, { req }) => {
-        if (req.user.resetPasswordToken === otp) {
-          return true;
-        } else {
-          req.errorStatus = 422;
-          throw "Invalid Password Token. Please try again";
-        }
-      }),
-  ];
-};
+// export const resetPasswordValidator = () => {
+//   return [
+//     body("email", "Email is required")
+//       .isEmail()
+//       .custom(async (email, { req }) => {
+//         try {
+//           const user = await User.findOne({
+//             email: email,
+//           });
+//           if (user) {
+//             req.user = user;
+//             return true;
+//           } else {
+//             throw "Email Does not Exist";
+//           }
+//         } catch (error) {
+//           throw new Error(error);
+//         }
+//       }),
+//     body("password", "New Password is Required")
+//       .isAlphanumeric()
+//       .isLength({ min: 8, max: 20 })
+//       .withMessage("Password must be between 8-20 characters"),
+//     body("confirmPassword", "Confirm Password is required")
+//       .notEmpty()
+//       .withMessage("Confirm Password must be between 8-20 characters"),
+//     body("otp", "Password verification token is required")
+//       .isNumeric()
+//       .custom((otp, { req }) => {
+//         if (req.user.resetPasswordToken === otp) {
+//           return true;
+//         } else {
+//           req.errorStatus = 422;
+//           throw "Invalid Password Token. Please try again";
+//         }
+//       }),
+//   ];
+// };
